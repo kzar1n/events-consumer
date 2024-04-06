@@ -1,7 +1,16 @@
 package main
 
-import "fmt"
+import (
+	"github.com/kzar1n/events-consumer/internal/infra/akafka"
+	"github.com/kzar1n/events-consumer/internal/infra/database"
+)
 
 func main() {
-	fmt.Println("Hello, World!")
+
+	database.InitializeDatabase()
+	kafkaConsumer := akafka.NewKafkaConsumer()
+	go kafkaConsumer.SubscribeTopics([]string{"events"})
+
+	kafkaConsumer.ConsumeMessages()
+
 }

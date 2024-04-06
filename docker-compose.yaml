@@ -1,7 +1,17 @@
 version: '3.8'
 
 services:
- 
+   
+  app:
+    container_name: consumer
+    image: consumer
+    build: .
+    platform: linux/amd64
+    ports:
+      - "8080:8080" 
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
+
   mysql:
     image: mysql
     container_name: mysql
@@ -15,6 +25,8 @@ services:
       - "./scripts/create_db.sql:/docker-entrypoint-initdb.d/1.sql"
       - "./scripts/create_tables.sql:/docker-entrypoint-initdb.d/2.sql"
       - "./scripts/inserts.sql:/docker-entrypoint-initdb.d/3.sql"
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
   
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -25,6 +37,8 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
 
   kafka:
     image: confluentinc/cp-server:latest
@@ -41,6 +55,8 @@ services:
       KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
   
   control-center:
     image: confluentinc/cp-enterprise-control-center:latest
@@ -88,6 +104,8 @@ services:
       CONTROL_CENTER_COMMAND_TOPIC_REPLICATION_FACTOR: 1
       CONTROL_CENTER_STREAMS_REPLICATION_FACTOR: 1
       PORT: 9021
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
 
 volumes:
   my-db:
