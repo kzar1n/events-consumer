@@ -3,17 +3,17 @@ package entity
 import "time"
 
 type Event struct {
-	ID         string
-	ID_payment string
-	Event_type string
-	Event_date time.Time
+	ID        string
+	IDPayment string
+	EventType string
+	EventDate time.Time
 }
 
-func NewEvent(id string, id_payment string, event_type string, event_date time.Time) *Event {
+func NewEvent(id string, IDPayment string, EventType string, EventDate time.Time) *Event {
 	return &Event{
-		ID:         id,
-		ID_payment: id_payment,
-		Event_type: event_type,
-		Event_date: event_date,
+		ID:        id,
+		IDPayment: IDPayment,
+		EventType: EventType,
+		EventDate: EventDate,
 	}
 }

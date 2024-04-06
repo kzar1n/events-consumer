@@ -15,4 +15,12 @@ $ docker-compose up -d
 ```
 
 
+{
+	"id": "d279ac07-6600-431c-a52d-04c448bf14b2",
+	"id_payment": "9479d5a3-dfda-443d-9063-8dc5543dc716",
+	"event_type": "inclusion",
+	"event_date": "2024-04-06T19:19:00.000Z"
+}
+
+
 

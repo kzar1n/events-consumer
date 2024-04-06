@@ -23,3 +23,11 @@ func NewPayment(id, idAccount, paymentType string, paymentDate time.Time, paymen
 		PaymentValue: paymentValue,
 	}
 }
+
+func SavePayment(payment *Payment) error {
+	return nil
+}
+
+func UpdatePayment(payment *Payment, newPayment *Payment) error {
+	return nil
+}

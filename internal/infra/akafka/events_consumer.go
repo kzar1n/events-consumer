@@ -1,15 +1,15 @@
 package akafka
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/kzar1n/events-consumer/internal/services"
 )
 
 const (
-	// KafkaServer is the Kafka server address
-	KafkaServer = "host.docker.internal:9092"
-	// KafkaGroupID is the Kafka group ID
+	KafkaServer  = "host.docker.internal:9092"
 	KafkaGroupID = "group_id"
 )
 
@@ -51,8 +51,14 @@ func (k *KafkaConsumer) SubscribeTopics(topics []string) {
 
 func (k *KafkaConsumer) ConsumeMessages() {
 	for msg := range k.msgChan {
+		eventDto := services.EventDTO{}
 		fmt.Printf("Message on %s: %s\n", msg.TopicPartition, string(msg.Value))
-		// Process message
+		// err := eventDto.EventDate.UnmarshalJSON(msg.Value)
+		err := json.Unmarshal(msg.Value, &eventDto)
+		if err != nil {
+			panic(err)
+		}
+		services.EventProcessor(&eventDto)
 	}
 }
 
