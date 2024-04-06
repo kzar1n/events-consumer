@@ -8,7 +8,7 @@
 
 ### Como executar:
 
-* Na raiz do projeto, executar o comando abaixo para iniciar os containers necessários (mysql e kafka)
+* Na raiz do projeto, executar o comando abaixo para iniciar os containers necessários (mysql e kafka):
 
 ```bash
 $ docker-compose up -d

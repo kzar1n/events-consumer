@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
  
@@ -11,6 +11,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
+      - my-db:/var/lib/mysql
       - "./scripts/create_db.sql:/docker-entrypoint-initdb.d/1.sql"
       - "./scripts/create_tables.sql:/docker-entrypoint-initdb.d/2.sql"
       - "./scripts/inserts.sql:/docker-entrypoint-initdb.d/3.sql"
@@ -87,5 +88,6 @@ services:
       CONTROL_CENTER_COMMAND_TOPIC_REPLICATION_FACTOR: 1
       CONTROL_CENTER_STREAMS_REPLICATION_FACTOR: 1
       PORT: 9021
-    
-  
+
+volumes:
+  my-db:
