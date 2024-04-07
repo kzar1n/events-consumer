@@ -1,7 +1,6 @@
 package services
 
 import (
-	"database/sql"
 	"fmt"
 	"time"
 
@@ -9,31 +8,31 @@ import (
 )
 
 type EventDTO struct {
-	ID        string    `json:"id"`
-	IDPayment string    `json:"id_payment"`
+	Id        string    `json:"Id"`
+	IdPayment string    `json:"Id_payment"`
 	EventType string    `json:"event_type"`
 	EventDate time.Time `json:"event_date"`
 }
 
 func NewEventDTO(event entity.Event) *EventDTO {
 	return &EventDTO{
-		ID:        event.ID,
-		IDPayment: event.IDPayment,
+		Id:        event.Id,
+		IdPayment: event.IdPayment,
 		EventType: event.EventType,
 		EventDate: event.EventDate,
 	}
 }
 
-func EventProcessor(eventDto *EventDTO) {
-	fmt.Printf("Processing event: %v\n", eventDto)
-	payment, err := FindPaymentByID(eventDto.IDPayment)
+func (t *EventDTO) EventProcessor() {
+	paymentService := NewPaymentService()
+	legacyPayment, err := paymentService.FindLegacyPaymentById(t.IdPayment)
+	if err != nil {
+		fmt.Println("Legacy Payment not found!")
+		legacyPayment = entity.NewLegacyPayment(t.IdPayment) //mocking legacy payment
+		// panic(err)
+	}
 
-	// TODO improve this process with some interface
-	if err == sql.ErrNoRows {
-		SavePayment(FindLegacyPaymentByID(eventDto.IDPayment))
-	} else if err != nil {
+	if err := paymentService.SaveOrUpdatePaymentFromLegacy(legacyPayment); err != nil {
 		panic(err)
-	} else {
-		UpdatePayment(payment, FindLegacyPaymentByID(eventDto.IDPayment))
 	}
 }

@@ -1,31 +1,42 @@
 package services
 
 import (
-	"fmt"
+	"database/sql"
 
 	"github.com/kzar1n/events-consumer/internal/entity"
 	"github.com/kzar1n/events-consumer/internal/infra/database"
 	"github.com/kzar1n/events-consumer/internal/infra/repository"
 )
 
-func FindPaymentByID(id string) (*entity.Payment, error) {
-	fmt.Printf("Finding payment by ID: %s\n", id)
-	payment, err := repository.NewPaymentRepository(database.DB).FindByID(id)
+type PaymentService struct {
+	PaymentRepository       *repository.PaymentRepository
+	LegacyPaymentRepository *repository.LegacyPaymentRepository
+}
 
-	if err != nil {
-		return nil, err
+func NewPaymentService() *PaymentService {
+	return &PaymentService{
+		PaymentRepository:       repository.NewPaymentRepository(database.MysqlDB),
+		LegacyPaymentRepository: repository.NewLegacyPaymentRepository(database.MysqlDB),
 	}
-	return payment, nil
 }
 
-func SavePayment(payment *entity.Payment) error {
-	return repository.NewPaymentRepository(database.DB).Save(payment)
+func (t *PaymentService) FindPaymentById(Id string) (*entity.Payment, error) {
+	return t.PaymentRepository.FindById(Id)
 }
 
-func UpdatePayment(payment *entity.Payment, newPayment *entity.Payment) error {
-	return repository.NewPaymentRepository(database.DB).Update(payment, newPayment)
+func (t *PaymentService) SaveOrUpdatePaymentFromLegacy(legacyPayment *entity.LegacyPayment) error {
+	payment := entity.NewPayment(legacyPayment.Id, legacyPayment.IdAccount, legacyPayment.PaymentType, legacyPayment.PaymentDate, legacyPayment.PaymentValue)
+
+	switch _, err := t.FindPaymentById(payment.Id); err {
+	case sql.ErrNoRows:
+		return t.PaymentRepository.Insert(payment)
+	case nil:
+		return t.PaymentRepository.UpdateById(payment.Id, payment)
+	default:
+		panic(err)
+	}
 }
 
-func FindLegacyPaymentByID(id string) *entity.Payment {
-	return entity.NewPaymentFromLegacy(id)
+func (t *PaymentService) FindLegacyPaymentById(Id string) (*entity.LegacyPayment, error) {
+	return t.LegacyPaymentRepository.FindLegacyPaymentById(Id)
 }

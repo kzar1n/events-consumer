@@ -7,10 +7,11 @@ import (
 
 func main() {
 
-	database.InitializeDatabase()
+	database.ConnectDB()
 	kafkaConsumer := akafka.NewKafkaConsumer()
 	go kafkaConsumer.SubscribeTopics([]string{"events"})
 
 	kafkaConsumer.ConsumeMessages()
 
+	defer database.MysqlDB.Close()
 }

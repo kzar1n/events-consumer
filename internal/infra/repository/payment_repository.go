@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/kzar1n/events-consumer/internal/entity"
 )
@@ -17,25 +16,20 @@ func NewPaymentRepository(db *sql.DB) *PaymentRepository {
 	}
 }
 
-func (r *PaymentRepository) Save(payment *entity.Payment) error {
-	// Save payment to database
-	return nil
-}
-
-func (r *PaymentRepository) FindByID(id string) (*entity.Payment, error) {
-	fmt.Printf("Finding payment by ID: %s\n", id)
+func (r *PaymentRepository) FindById(Id string) (*entity.Payment, error) {
 	payment := &entity.Payment{}
-	query := `SELETEC id_payment, id_account, payment_type, payment_date, payment_value FROM payments WHERE id = $1`
-	err := r.DB.QueryRow(query, id).Scan(&payment.ID, &payment.IdAccount, &payment.PaymentType, &payment.PaymentDate, &payment.PaymentValue)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return payment, nil
+	sqlStatement := `SELECT id_payment, id_account, payment_type, payment_date, payment_value FROM payments WHERE id_payment=?`
+	return payment, r.DB.QueryRow(sqlStatement, Id).Scan(&payment.Id, &payment.IdAccount, &payment.PaymentType, &payment.PaymentDate, &payment.PaymentValue)
 }
 
-func (r *PaymentRepository) Update(payment *entity.Payment, newPayment *entity.Payment) error {
-	// Update payment in database
-	return nil
+func (r *PaymentRepository) Insert(payment *entity.Payment) error {
+	sqlStatement := `INSERT INTO payments (id_payment, id_account, payment_type, payment_date, payment_value) VALUES (?, ?, ?, ?, ?)`
+	_, err := r.DB.Exec(sqlStatement, payment.Id, payment.IdAccount, payment.PaymentType, payment.PaymentDate, payment.PaymentValue)
+	return err
+}
+
+func (r *PaymentRepository) UpdateById(Id string, newPayment *entity.Payment) error {
+	sqlStatement := `UPDATE payments SET id_account = ?, payment_type = ?, payment_date = ?, payment_value = ?, updated_at = current_timestamp, update_count = update_count + 1 WHERE id_payment = ?`
+	_, err := r.DB.Exec(sqlStatement, newPayment.IdAccount, newPayment.PaymentType, newPayment.PaymentDate, newPayment.PaymentValue, Id)
+	return err
 }

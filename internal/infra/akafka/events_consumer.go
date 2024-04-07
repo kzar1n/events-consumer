@@ -38,12 +38,11 @@ func (k *KafkaConsumer) SubscribeTopics(topics []string) {
 	if err := k.Consumer.SubscribeTopics(topics, nil); err != nil {
 		panic(err)
 	} else {
-		fmt.Printf("Subscribed to topics: %v\n", topics)
+		fmt.Println("Subscribed to topics: ", topics)
 	}
 
 	for {
-		msg, err := k.Consumer.ReadMessage(-1)
-		if err == nil {
+		if msg, err := k.Consumer.ReadMessage(-1); err == nil {
 			k.msgChan <- msg
 		}
 	}
@@ -52,16 +51,15 @@ func (k *KafkaConsumer) SubscribeTopics(topics []string) {
 func (k *KafkaConsumer) ConsumeMessages() {
 	for msg := range k.msgChan {
 		eventDto := services.EventDTO{}
-		fmt.Printf("Message on %s: %s\n", msg.TopicPartition, string(msg.Value))
-		// err := eventDto.EventDate.UnmarshalJSON(msg.Value)
-		err := json.Unmarshal(msg.Value, &eventDto)
-		if err != nil {
-			panic(err)
-		}
-		services.EventProcessor(&eventDto)
-	}
-}
 
-func SendMessage() {
-	// Send message to Kafka
+		if err := json.Unmarshal(msg.Value, &eventDto); err != nil {
+			fmt.Println("Invalid event: ", msg.Value)
+		}
+
+		if eventDto.IdPayment != "" {
+			eventDto.EventProcessor()
+		} else {
+			fmt.Println("Invalid event: ", msg.Value)
+		}
+	}
 }
