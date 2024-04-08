@@ -7,7 +7,8 @@ import (
 
 func main() {
 
-	database.ConnectDB()
+	database.ConnectMysqlDB()
+	database.ConnectPostgreDB()
 	kafkaConsumer := akafka.NewKafkaConsumer()
 	go kafkaConsumer.SubscribeTopics([]string{"events"})
 
