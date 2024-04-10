@@ -2,24 +2,24 @@ package entity
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type LegacyPayment struct {
-	Id           string
-	IdAccount    string
-	PaymentType  string
-	PaymentDate  time.Time
-	PaymentValue float64
+	Id            string
+	IdAccount     string
+	PaymentType   string
+	PaymentDate   time.Time
+	PaymentValue  float64
+	PaymentStatus string
 }
 
-func NewLegacyPayment(Id string) *LegacyPayment {
+func NewLegacyPayment(id, idAccount, paymentType string) *LegacyPayment {
 	return &LegacyPayment{
-		Id:           Id,
-		IdAccount:    uuid.New().String(),
-		PaymentType:  "legacy",
-		PaymentDate:  time.Now(),
-		PaymentValue: 100.00,
+		Id:            id,
+		IdAccount:     idAccount,
+		PaymentType:   paymentType,
+		PaymentDate:   time.Now(),
+		PaymentValue:  100.00,
+		PaymentStatus: "PENDING",
 	}
 }

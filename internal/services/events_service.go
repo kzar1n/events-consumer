@@ -14,7 +14,7 @@ type EventDTO struct {
 	EventDate time.Time `json:"event_date"`
 }
 
-func NewEventDTO(event entity.Event) *EventDTO {
+func NewEventDTO(event *entity.Event) *EventDTO {
 	return &EventDTO{
 		Id:        event.Id,
 		IdPayment: event.IdPayment,
@@ -27,9 +27,8 @@ func (t *EventDTO) EventProcessor() {
 	paymentService := NewPaymentService()
 	legacyPayment, err := paymentService.FindLegacyPaymentById(t.IdPayment)
 	if err != nil {
-		fmt.Println("Legacy Payment not found!")
-		legacyPayment = entity.NewLegacyPayment(t.IdPayment) //mocking legacy payment
-		// panic(err)
+		fmt.Println("Legacy Payment not found! -> ", t.IdPayment, " error: ", err)
+		panic(err)
 	}
 
 	if err := paymentService.SaveOrUpdatePaymentFromLegacy(legacyPayment); err != nil {

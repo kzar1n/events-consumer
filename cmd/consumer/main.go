@@ -9,10 +9,11 @@ func main() {
 
 	database.ConnectMysqlDB()
 	database.ConnectPostgreDB()
-	kafkaConsumer := akafka.NewKafkaConsumer()
+	kafkaConsumer := akafka.NewKafkaConsumer("host.docker.internal:9092", "group_id")
 	go kafkaConsumer.SubscribeTopics([]string{"events"})
 
 	kafkaConsumer.ConsumeMessages()
 
 	defer database.MysqlDB.Close()
+	defer database.PostgreDB.Close()
 }

@@ -18,11 +18,11 @@ type KafkaConsumer struct {
 	msgChan  chan *kafka.Message
 }
 
-func NewKafkaConsumer() *KafkaConsumer {
+func NewKafkaConsumer(server, groupId string) *KafkaConsumer {
 	msgChan := make(chan *kafka.Message)
 	kafkaConsumer, err := kafka.NewConsumer(&kafka.ConfigMap{
-		"bootstrap.servers": KafkaServer,
-		"group.id":          KafkaGroupID,
+		"bootstrap.servers": server,
+		"group.id":          groupId,
 		"auto.offset.reset": "earliest",
 	})
 	if err != nil {
@@ -57,6 +57,7 @@ func (k *KafkaConsumer) ConsumeMessages() {
 		}
 
 		if eventDto.IdPayment != "" {
+			fmt.Println("Processing event: ", eventDto)
 			eventDto.EventProcessor()
 		} else {
 			fmt.Println("Invalid event: ", msg.Value)

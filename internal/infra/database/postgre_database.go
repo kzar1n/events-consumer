@@ -20,7 +20,7 @@ func ConnectPostgreDB() {
 	var DATABASE = "legacy"
 	var err error
 
-	conectionString := "user=" + USERNAME + " dbname=" + DATABASE + "password=" + PASSWORD + " host=" + SERVER + " port=" + PORT + " sslmode=disable"
+	conectionString := "user=" + USERNAME + " dbname=" + DATABASE + " password=" + PASSWORD + " host=" + SERVER + " port=" + PORT + " sslmode=disable"
 	PostgreDB, err = sql.Open("postgres", conectionString)
 
 	if err != nil {

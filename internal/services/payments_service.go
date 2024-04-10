@@ -16,7 +16,7 @@ type PaymentService struct {
 func NewPaymentService() *PaymentService {
 	return &PaymentService{
 		PaymentRepository:       repository.NewPaymentRepository(database.MysqlDB),
-		LegacyPaymentRepository: repository.NewLegacyPaymentRepository(database.MysqlDB),
+		LegacyPaymentRepository: repository.NewLegacyPaymentRepository(database.PostgreDB),
 	}
 }
 
@@ -39,4 +39,8 @@ func (t *PaymentService) SaveOrUpdatePaymentFromLegacy(legacyPayment *entity.Leg
 
 func (t *PaymentService) FindLegacyPaymentById(Id string) (*entity.LegacyPayment, error) {
 	return t.LegacyPaymentRepository.FindLegacyPaymentById(Id)
+}
+
+func (t *PaymentService) SaveLegacyPayment(legacyPayment *entity.LegacyPayment) error {
+	return t.LegacyPaymentRepository.Insert(legacyPayment)
 }
